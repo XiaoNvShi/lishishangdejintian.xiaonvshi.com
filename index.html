@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>历史上的今天</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- SEO 基础信息 -->
+<meta name="keywords" content="历史上的今天,历史事件,大事件,名人出生,名人逝世,肖女士">
+<meta name="description" content="历史上的今天发生了什么？有哪些重要的历史事件、名人出生与逝世？">
+<meta name="author" content="肖女士">
+
+<!-- Open Graph 社交分享 -->
+<meta property="og:title" content="历史上的今天">
+<meta property="og:description" content="历史上的今天发生了什么？有哪些重要的历史事件、名人出生与逝世？">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lishishangdejintian.xiaonvshi.com/">
+<meta property="og:image" content="">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="历史上的今天">
+<meta name="twitter:description" content="历史上的今天发生了什么？有哪些重要的历史事件、名人出生与逝世？">
+<meta name="twitter:image" content="">
+
+<style>
+    :root {
+        --bg:#f3f4f6;
+        --card:#fff;
+        --text:#1f2937;
+        --muted:#6b7280;
+        --primary:#8b5cf6;
+        --success:#10b981;
+        --danger:#ef4444;
+    }
+
+    body {
+        margin:0;
+        font-family:"Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+    }
+
+    .banner {
+        background: linear-gradient(135deg, #ff4c4c, #4f9aff, #10b981, #8e44ff);
+        background-size: 400% 400%;
+        animation: gradientAnimation 8s ease infinite;
+        color:#fff;
+        text-align:center;
+        padding:40px 20px;
+    }
+
+    @keyframes gradientAnimation {
+        0% { background-position: 0% 50%; }
+        25% { background-position: 50% 50%; }
+        50% { background-position: 100% 50%; }
+        75% { background-position: 50% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .banner h1 {
+        font-size: clamp(24px, 5vw, 36px);
+        margin:0 0 8px;
+    }
+
+    .banner p {
+        margin:0;
+        font-size:16px;
+        opacity:0.9;
+    }
+
+    .container {
+        max-width:1000px;
+        margin:-30px auto 30px;
+        padding: 0 15px;
+        display:grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap:18px;
+    }
+
+    .event-card {
+        background:var(--card);
+        border-radius:12px;
+        padding:18px 20px;
+        box-shadow:0 3px 10px rgba(0,0,0,0.08);
+        display:flex;
+        flex-direction:column;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .event-card:hover {
+        transform:translateY(-4px);
+        box-shadow:0 6px 16px rgba(0,0,0,0.1);
+    }
+
+    .event-head {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        margin-bottom:10px;
+        flex-wrap:wrap;
+        gap:8px;
+    }
+
+    .date {
+        font-weight:bold;
+        font-size:15px;
+        color: var(--primary);
+    }
+
+    .badge {
+        font-size:12px;
+        padding:3px 10px;
+        border-radius:999px;
+        color:#fff;
+        font-weight:500;
+        white-space:nowrap;
+    }
+
+    .type-1 {
+        background: linear-gradient(135deg, #4f9aff, #8e44ff);
+    }
+
+    .type-2 {
+        background: linear-gradient(135deg, #10b981, #8e44ff);
+    }
+
+    .type-3 {
+        background: linear-gradient(135deg, #ef4444, #8e44ff);
+    }
+
+    .event-text {
+        font-size:15px;
+        line-height:1.6;
+        color: var(--text);
+    }
+
+    .empty,
+    .loading,
+    .error {
+        grid-column:1/-1;
+        text-align:center;
+        color: var(--muted);
+        padding:40px 0;
+        font-size:16px;
+    }
+
+    .error {
+        color: var(--danger);
+    }
+
+    .footer {
+        text-align:center;
+        font-size:13px;
+        color: var(--muted);
+        margin:20px 0;
+    }
+
+    .footer a {
+        color:inherit;
+        text-decoration:none;
+    }
+</style>
+</head>
+<body>
+    <div class="banner">
+        <h1>历史上的今天</h1>
+        <p><span id="todayText">今天</span> 的历史事件</p>
+    </div>
+
+    <main id="eventsContainer" class="container">
+        <div class="loading">正在加载历史事件...</div>
+    </main>
+
+    <div class="footer">
+        &copy;<span id="yearText"></span> <a href="https://www.xiaonvshi.com" target="_blank" rel="noopener noreferrer">肖女士</a> 版权所有
+    </div>
+
+<script>
+(function () {
+    const typeMap = {
+        1: "大事件",
+        2: "出生",
+        3: "逝世"
+    };
+
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    const currentYear = now.getFullYear();
+
+    const todayText = document.getElementById("todayText");
+    const yearText = document.getElementById("yearText");
+    const container = document.getElementById("eventsContainer");
+
+    todayText.textContent = `${month} 月 ${day} 日`;
+    yearText.textContent = currentYear;
+
+    const apiUrl = `https://api.mrwang.com/history_in_today.php?month=${encodeURIComponent(month)}&day=${encodeURIComponent(day)}`;
+
+    loadEvents();
+
+    async function loadEvents() {
+        try {
+            const response = await fetch(apiUrl, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`接口请求失败，状态码：${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (Number(result.code) !== 200) {
+                throw new Error(result.msg || "接口返回异常");
+            }
+
+            const events = Array.isArray(result.data) ? result.data : [];
+
+            events.sort(function (a, b) {
+                return parseInt(a.year, 10) - parseInt(b.year, 10);
+            });
+
+            renderEvents(events);
+        } catch (error) {
+            renderError(error.message || "加载失败，请稍后再试。");
+        }
+    }
+
+    function renderEvents(events) {
+        container.innerHTML = "";
+
+        if (!events.length) {
+            const empty = document.createElement("div");
+            empty.className = "empty";
+            empty.textContent = `没有查询到 ${month} 月 ${day} 日 的历史事件。`;
+            container.appendChild(empty);
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        events.forEach(function (event) {
+            fragment.appendChild(createEventCard(event));
+        });
+
+        container.appendChild(fragment);
+    }
+
+    function createEventCard(event) {
+        const card = document.createElement("article");
+        card.className = "event-card";
+
+        const head = document.createElement("div");
+        head.className = "event-head";
+
+        const date = document.createElement("div");
+        date.className = "date";
+        date.textContent = `${safeText(event.year)} 年 ${safeText(event.month)} 月 ${safeText(event.day)} 日`;
+
+        const type = parseInt(event.type, 10);
+        const badge = document.createElement("span");
+        badge.className = `badge type-${Number.isFinite(type) ? type : "unknown"}`;
+        badge.textContent = typeMap[type] || "未知";
+
+        const text = document.createElement("div");
+        text.className = "event-text";
+        text.textContent = cleanEventText(event.data);
+
+        head.appendChild(date);
+        head.appendChild(badge);
+        card.appendChild(head);
+        card.appendChild(text);
+
+        return card;
+    }
+
+    function cleanEventText(value) {
+        const raw = safeText(value);
+        const withoutPrefix = raw.replace(/^\[[^\]]*\]\s*/u, "");
+        return stripTags(withoutPrefix).trim();
+    }
+
+    function stripTags(value) {
+        const div = document.createElement("div");
+        div.innerHTML = value;
+        return div.textContent || div.innerText || "";
+    }
+
+    function safeText(value) {
+        return value === null || value === undefined ? "" : String(value);
+    }
+
+    function renderError(message) {
+        container.innerHTML = "";
+
+        const error = document.createElement("div");
+        error.className = "error";
+        error.textContent = message;
+
+        container.appendChild(error);
+    }
+})();
+</script>
+</body>
+</html>
